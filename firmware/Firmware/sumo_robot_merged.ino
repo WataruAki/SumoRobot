@@ -9,32 +9,45 @@
 #define ESP_ARDUINO_VERSION_MAJOR 2
 #endif
 
-constexpr uint8_t PIN_START_BUTTON = 27;
+// ================================================================
+// CAU HINH PHAN CUNG - SUA CAC CHAN THEO MACH THUC TE
+// Ho tro API LEDC cua ca Arduino-ESP32 Core 2.x va 3.x.
+// ================================================================
+
+// Phan bo chan tranh trung voi TB6612 va tranh I2C mac dinh 21/22.
+constexpr uint8_t PIN_START_BUTTON = 27;  // Nut noi xuong GND
 
 constexpr uint8_t PIN_US_TRIG = 25;
-constexpr uint8_t PIN_US_ECHO = 26;
+constexpr uint8_t PIN_US_ECHO = 26;       // HC-SR04 ECHO phai ha 5 V xuong 3.3 V
 
 constexpr uint8_t PIN_TOF_SDA = 33;
 constexpr uint8_t PIN_TOF_SCL = 13;
 
-constexpr uint8_t PIN_LEFT_PWM  = 18;
-constexpr uint8_t PIN_LEFT_IN1  = 21;
-constexpr uint8_t PIN_LEFT_IN2  = 19;
-constexpr uint8_t PIN_RIGHT_PWM = 5;
-constexpr uint8_t PIN_RIGHT_IN1 = 22;
-constexpr uint8_t PIN_RIGHT_IN2 = 23;
+// TB6612 theo danh sach chan day thuc te:
+// Kenh A = motor trai, kenh B = motor phai.
+constexpr uint8_t PIN_LEFT_PWM  = 18;  // PWMA
+constexpr uint8_t PIN_LEFT_IN1  = 21;  // AIN1
+constexpr uint8_t PIN_LEFT_IN2  = 19;  // AIN2
+constexpr uint8_t PIN_RIGHT_PWM = 5;   // PWMB
+constexpr uint8_t PIN_RIGHT_IN1 = 22;  // BIN1
+constexpr uint8_t PIN_RIGHT_IN2 = 23;  // BIN2
 
+// Doi false -> true neu mot ben quay nguoc khi ra lenh tien.
 constexpr bool INVERT_LEFT_MOTOR = false;
 constexpr bool INVERT_RIGHT_MOTOR = false;
 
+// Mot cam bien bien dat o GIUA PHIA TRUOC, sat mat san.
+// Voi chi mot cam bien, khong duoc lui lau vi phia sau khong duoc quan sat.
 constexpr uint8_t PIN_EDGE_CENTER = 32;
-constexpr uint8_t EDGE_WHITE_LEVEL = HIGH;
+constexpr uint8_t EDGE_WHITE_LEVEL = HIGH;  // Doi thanh LOW neu module xuat LOW tren vach trang
 
 constexpr uint32_t PWM_FREQUENCY = 20000;
 constexpr uint8_t PWM_RESOLUTION = 8;
-constexpr uint8_t PWM_CHANNEL_LEFT = 0;
-constexpr uint8_t PWM_CHANNEL_RIGHT = 1;
+constexpr uint8_t PWM_CHANNEL_LEFT = 0;   // Chi dung voi Arduino-ESP32 Core 2.x
+constexpr uint8_t PWM_CHANNEL_RIGHT = 1;  // Chi dung voi Arduino-ESP32 Core 2.x
 
+// Bat khi da cai thu vien Pololu VL53L0X va noi cam bien dung.
+// Co the dat -DUSE_VL53L0X=1 trong build flags ma khong can sua file.
 #ifndef USE_VL53L0X
 #define USE_VL53L0X 0
 #endif
@@ -45,9 +58,14 @@ constexpr uint8_t PWM_CHANNEL_RIGHT = 1;
 VL53L0X tof;
 #endif
 
+// ================================================================
+// THAM SO CHIEN THUAT
+// ================================================================
+
 constexpr uint32_t START_DEBOUNCE_MS = 35;
 constexpr uint32_t PHASE_1_MS = 5000;
 
+// Khong ping lien tuc. Jitter nho giup giam kha nang trung xung voi robot doi thu.
 constexpr uint32_t US_PROBE_MIN_INTERVAL_MS = 45;
 constexpr uint32_t US_PROBE_MAX_INTERVAL_MS = 70;
 constexpr uint32_t US_JUKE_MIN_INTERVAL_MS  = 26;
@@ -55,14 +73,14 @@ constexpr uint32_t US_JUKE_MAX_INTERVAL_MS  = 36;
 
 constexpr uint16_t US_MIN_CM = 3;
 constexpr uint16_t US_MAX_CM = 55;
-constexpr uint32_t US_TIMEOUT_US = 3500;
+constexpr uint32_t US_TIMEOUT_US = 3500;  // Khoang 59 cm
 
-constexpr uint32_t TOF_INTERVAL_MS = 50;
+constexpr uint32_t TOF_INTERVAL_MS = 50;  // Tot hon 20 ms cho muc tieu toi/den
 constexpr uint16_t TOF_MIN_MM = 20;
 constexpr uint16_t TOF_MAX_MM = 550;
 
-constexpr uint32_t JUKE_MIN_MS = 75;
-constexpr uint32_t JUKE_DEFAULT_MS = 145;
+constexpr uint32_t JUKE_MIN_MS = 75;       // Khong tin mot lan mat muc tieu qua som
+constexpr uint32_t JUKE_DEFAULT_MS = 145;  // Dung khi Phase 1 khong khoa duoc doi thu
 constexpr uint32_t JUKE_MAX_MS = 240;
 constexpr uint8_t LOST_CONFIRM_COUNT = 3;
 
@@ -85,6 +103,7 @@ constexpr uint32_t ATTACK_BURST_MS = 80;
 constexpr uint32_t ANCHOR_ESCAPE_MS = 65;
 constexpr uint32_t FLANK_ARC_MS = 220;
 
+// Thoi gian ngan hon ban 2-cam-bien vi chi nhin thay vach o phia truoc.
 constexpr uint32_t BLIND_RUSH_MS = 70;
 constexpr uint32_t SEARCH_DIRECTION_MS = 650;
 constexpr uint32_t EDGE_REVERSE_MIN_MS = 65;
@@ -92,6 +111,8 @@ constexpr uint32_t EDGE_REVERSE_MAX_MS = 125;
 constexpr uint32_t EDGE_CLEAR_CONFIRM_MS = 20;
 constexpr uint32_t EDGE_TURN_MS = 160;
 
+// Pin 2S cap thang cho TB6612; LM2596 chi cap 5 V cho ESP32/cam bien.
+// Cac muc nay gioi han TT 6 V khi pin day 8.4 V.
 constexpr int PWM_SEARCH = 90;
 constexpr int PWM_JUKE = 190;
 constexpr int PWM_APPROACH = 175;
@@ -173,7 +194,7 @@ uint32_t edgeEscapeStartMs = 0;
 uint32_t edgeClearStartMs = 0;
 uint32_t tacticalActionStartMs = 0;
 
-int jukeDirection = 1;
+int jukeDirection = 1;  // 1: pivot trai, 2: pivot phai
 int searchDirection = 1;
 int edgeTurnDirection = 1;
 int flankDirection = 1;
@@ -186,6 +207,10 @@ bool predictiveRushActive = false;
 bool p5HadTarget = false;
 Phase5SubState p5State = P5_REGULAR_TRACKING;
 Phase4SubState p4State = P4_APPROACH;
+
+// ================================================================
+// KHAI BAO HAM
+// ================================================================
 
 void setMotor(int speed, uint8_t pwmPin, uint8_t in1, uint8_t in2);
 void shortBrakeMotor(uint8_t pwmPin, uint8_t in1, uint8_t in2);
@@ -244,6 +269,7 @@ void setup() {
   if (!tof.init()) {
     Serial.println("[LOI] Khong tim thay VL53L0X.");
   } else {
+    // 50 ms cho nhieu photon hon, on dinh hon voi vo den.
     tof.setMeasurementTimingBudget(50000);
     tof.startContinuous(TOF_INTERVAL_MS);
   }
@@ -293,6 +319,7 @@ void loop() {
     case PHASE_2_JUKE: {
       const uint32_t elapsed = now - phaseStartMs;
 
+      // Cam bien bien luon co quyen uu tien cao nhat.
       if (edgeDetected()) {
         enterEdgeEscape(now);
         Serial.println("[AN TOAN] Phat hien vach trang trong luc ne.");
@@ -341,6 +368,10 @@ void loop() {
   }
 }
 
+// ================================================================
+// THAM DO 5 GIAY
+// ================================================================
+
 void resetTelemetry() {
   enemy = OpponentTelemetry{};
   usSampleCount = 0;
@@ -388,6 +419,7 @@ void finalizePhase1() {
                             ? static_cast<float>(enemy.tofValidSamples) / enemy.tofAttempts
                             : 0.0f;
 
+  // ToF co chum hep hon, nen uu tien median ToF neu du mau hop le.
   if (tofSampleCount >= 5) {
     enemy.distanceCm = medianOf(tofSamples, tofSampleCount) / 10;
   } else if (usSampleCount >= 5) {
@@ -405,6 +437,7 @@ void finalizePhase1() {
 }
 
 uint16_t medianOf(uint16_t *values, size_t count) {
+  // Sap xep chen tai cho; voi toi da ~100 mau va chi chay mot lan thi du nhanh.
   for (size_t i = 1; i < count; ++i) {
     const uint16_t key = values[i];
     size_t j = i;
@@ -420,6 +453,10 @@ uint16_t medianOf(uint16_t *values, size_t count) {
   return static_cast<uint16_t>(
       (static_cast<uint32_t>(values[count / 2 - 1]) + values[count / 2]) / 2U);
 }
+
+// ================================================================
+// PHASE 2: JUKE CO PHAN HOI
+// ================================================================
 
 bool targetLostConfirmed(uint32_t now) {
   if (now - lastUsScanMs < nextUsIntervalMs) {
@@ -444,7 +481,7 @@ int readUltrasonicCm() {
   digitalWrite(PIN_US_TRIG, LOW);
   delayMicroseconds(2);
   digitalWrite(PIN_US_TRIG, HIGH);
-  delayMicroseconds(10);
+  delayMicroseconds(10);  // HC-SR04 can xung kich toi thieu 10 us
   digitalWrite(PIN_US_TRIG, LOW);
 
   const uint32_t duration = pulseIn(PIN_US_ECHO, HIGH, US_TIMEOUT_US);
@@ -461,6 +498,10 @@ int readToFMm() {
   return -1;
 #endif
 }
+
+// ================================================================
+// PHASE 3, 4, 5
+// ================================================================
 
 void resetCombatObservation(uint32_t now) {
   combatUsCm = -1;
@@ -541,9 +582,9 @@ uint16_t combatDistanceCm(uint32_t now) {
 void executeSearchTurn(int direction, int pwm) {
   pwm = constrain(pwm, 0, 255);
   if (direction == 1) {
-    motorsDrive(-pwm, pwm);
+    motorsDrive(-pwm, pwm);  // Xoay trai
   } else {
-    motorsDrive(pwm, -pwm);
+    motorsDrive(pwm, -pwm);  // Xoay phai
   }
 }
 
@@ -710,6 +751,7 @@ void handlePhase5(uint32_t now) {
       }
 
       if (predictiveRushActive && now - predictiveRushStartMs < BLIND_RUSH_MS) {
+        // Chi giu quan tinh rat ngan; mot cam bien bien khong bao ve duoc phia sau/hai ben.
         motorsDrive(PWM_BLIND_RUSH, PWM_BLIND_RUSH);
         return;
       }
@@ -777,6 +819,7 @@ void handlePhase5(uint32_t now) {
     }
 
     case P5_ANCHOR_ESCAPE:
+      // Chi lui 65 ms vi robot khong co cam bien bien phia sau.
       motorsDrive(-PWM_ESCAPE, -PWM_ESCAPE);
       if (now - tacticalActionStartMs >= ANCHOR_ESCAPE_MS) {
         stopMotors();
@@ -810,6 +853,7 @@ void handlePhase5(uint32_t now) {
       const bool onLine = edgeDetected();
       const uint32_t elapsed = now - edgeEscapeStartMs;
 
+      // Lui vua phai va co gioi han, vi khong co cam bien o duoi duoi xe/phia sau.
       motorsDrive(-PWM_EDGE_REVERSE, -PWM_EDGE_REVERSE);
 
       if (onLine) {
@@ -830,6 +874,7 @@ void handlePhase5(uint32_t now) {
     }
 
     case P5_EDGE_TURNING:
+      // Neu dau xe quet lai vach trong luc xoay, lui ngan lai mot lan nua.
       if (edgeDetected()) {
         p5State = P5_EDGE_REVERSING;
         edgeEscapeStartMs = now;
@@ -851,6 +896,10 @@ void handlePhase5(uint32_t now) {
   }
 }
 
+// ================================================================
+// DONG CO VA AN TOAN BIEN
+// ================================================================
+
 void setMotor(int speed, uint8_t pwmPin, uint8_t in1, uint8_t in2) {
   speed = constrain(speed, -255, 255);
 
@@ -870,6 +919,7 @@ void setMotor(int speed, uint8_t pwmPin, uint8_t in1, uint8_t in2) {
 }
 
 void shortBrakeMotor(uint8_t pwmPin, uint8_t in1, uint8_t in2) {
+  // TB6612: IN1=IN2=HIGH va PWM=HIGH la short-brake.
   digitalWrite(in1, HIGH);
   digitalWrite(in2, HIGH);
   writeMotorPwm(pwmPin, 255);
@@ -916,6 +966,7 @@ void executeJuke(int direction) {
 }
 
 void executeCounterBrake(int direction) {
+  // Dung che do short-brake cua TB6612, khong dao chieu motor dot ngot.
   if (direction == 1) {
     setMotor(0, PIN_LEFT_PWM, PIN_LEFT_IN1, PIN_LEFT_IN2);
     shortBrakeMotor(PIN_RIGHT_PWM, PIN_RIGHT_IN1, PIN_RIGHT_IN2);
